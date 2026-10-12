@@ -1,0 +1,8 @@
+OB related information:
+VM_SM:	    SM / this data taken in Visitor or Service Mode (NONE: telluric standards)
+OB_GRADE:   A  / A: fully within specs; B: mostly within specs; C or D: out of specs; X: unknown (VM)
+OB_COMMENT: 
+
+QC related information:
+QCFLAG:     1010000 / quality flag, see release description
+QC_COMMENT: none / automatic QC comment 
