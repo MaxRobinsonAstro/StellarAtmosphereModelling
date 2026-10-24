@@ -1,7 +1,7 @@
 """
 Spectra for HIP_84543
 """
-import pyphot
+#import pyphot
 import numpy as np
 import matplotlib.pyplot as plt
 from astropy.io import fits
@@ -125,7 +125,7 @@ plt.legend()
 
 plt.show()
 
-lib = pyphot.get_library()
+"""lib = pyphot.get_library()
 
 wave = np.asarray(wave, dtype=float) * 10
 flux = np.asarray(flux, dtype=float)
@@ -134,4 +134,4 @@ f = lib['GROUND_JOHNSON_V']
 sed = f.get_flux(wave,flux)
 sed1 = f.Vega_zero_flux
 mag = -2.5 * np.log10(f.get_flux(wave,flux) / f.Vega_zero_flux)
-print(mag)
+print(mag)"""
