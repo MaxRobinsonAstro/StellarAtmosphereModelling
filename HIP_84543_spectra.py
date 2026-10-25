@@ -6,6 +6,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from astropy.io import fits
 from scipy import special
+import csv
+from pathlib import Path
 
 h = 6.62607015e-27  # in erg cgs
 c = 2.99792458e10  
@@ -71,6 +73,12 @@ print(waves[2][arg2])
 wave = np.concatenate(waves) #concatenating each arm into one array
 flux = np.concatenate(fluxes)
 err = np.concatenate(e)
+
+output_file = Path(__file__).parent / 'HIP_84543.txt'
+
+with open(output_file , 'w') as f:
+    writer = csv.writer(f, delimiter = '\t')
+    writer.writerows(zip(wave,flux,err))
 
 model = np.loadtxt("OneDrive - Maynooth University/Project/HIP_84543/mp_t6500_g+4.5_m+0.00_a+0.00_c+0.00_v0_r10000_resam.txt") * 7 * 1e-20 #bosz model
 lam = np.loadtxt("OneDrive - Maynooth University/Project/HIP_84543/bosz2024_wave_r10000.txt") / 10 #converting to nm
