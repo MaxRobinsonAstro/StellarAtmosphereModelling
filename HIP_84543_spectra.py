@@ -19,8 +19,8 @@ def planck_law(wavelength, temperature):
     sr = 8 * 1e-28 * (2 * h * c**2) / ((wavelength*1e-7)**5 * (np.exp(exponent) - 1))
     return sr
 
-airmass = 1.194
-sigma_dimm = 1.406
+airmass = 1.5
+sigma_dimm = 2.16
 
 def dimm(wave, sigma_dimm, airmass, width):
     """Calculates T (slit loss factor"""
@@ -60,9 +60,9 @@ waves[2] = waves[2][arg2:]  #all NIR arrays from arg1 onward
 fluxes[2] = fluxes[2][arg2:]
 e[2] = e[2][arg2:]
 
-fluxes[0] = fluxes[0] * (1 - dimm(waves[0], sigma_dimm, airmass, 1)) #applying DIMM seeing to the fluxes for different slit widths on each arm
-fluxes[1] = fluxes[1] * (1 - dimm(waves[1], sigma_dimm, airmass, 0.9))
-fluxes[2] = fluxes[2] * (1 - dimm(waves[2], sigma_dimm, airmass, 0.6))
+fluxes[0] = fluxes[0] / dimm(waves[0], sigma_dimm, airmass, 1) #applying DIMM seeing to the fluxes for different slit widths on each arm
+fluxes[1] = fluxes[1] / dimm(waves[1], sigma_dimm, airmass, 0.9)
+fluxes[2] = fluxes[2] / dimm(waves[2], sigma_dimm, airmass, 0.6)
 
 diff1 = np.abs((fluxes[0][-1] - fluxes[1][0]) / fluxes[0][-1] * 100) #percentage difference between arms
 diff2 = np.abs((fluxes[1][-1] - fluxes[2][0]) / fluxes[1][-1] * 100)
@@ -95,7 +95,7 @@ plt.rcParams.update({
 plt.figure(figsize=(12,5))
 for i in range(3):
     plt.plot(waves[i],fluxes[i],linewidth = 0.1, alpha = 0.8, color = colours[i])
-    plt.ylim(0,0.2e-12)
+    plt.ylim(0,1e-12)
 plt.plot(wave,planck_law(wave, 5500), c ='magenta')
 plt.xlabel(r'Wavelength (nm)')
 plt.ylabel(r'Flux ($erg\ cm^{-2} s^{-1} \AA^{-1}$)')
@@ -106,7 +106,7 @@ f = model[:,1]
 plt.figure(figsize=(12,5))
 plt.plot(wave,flux,linewidth = 0.1, c = 'cyan', alpha = 0.8)
 plt.plot(lam,f+w, c = 'violet', linewidth = 0.1, alpha = 0.8)
-plt.ylim(0,0.5e-12)
+plt.ylim(0,1e-12)
 plt.axvline(364.7, linewidth = 0.5, c = 'r')
 plt.xlim(0,2500)
 plt.xlabel(r'Wavelength (nm)')
@@ -125,7 +125,7 @@ plt.xlim(0,2500)
 
 plt.figure(figsize=(12,5))
 plt.plot(wave,flux,linewidth = 1, c = 'cyan', alpha = 0.8)
-plt.ylim(0,.2e-12)
+plt.ylim(0,1e-12)
 plt.axvline(364.7, linewidth = 0.5, c = 'r')
 #plt.yscale('log')
 #plt.xscale('log')
