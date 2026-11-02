@@ -11,20 +11,32 @@ s, data, waves, fluxes, e = [], [], [], [], [] #2d arrays for wavelength, flux a
 for f in files:
     s.append(fits.open(f))
 
-print(s[0][0].header)
 
 for i in range(len(s)):
     data.append(s[i][1].data)
 
-date = s[0][0].header['DATE']
-date_obs = s[0][0].header['DATE-OBS']
-obj = s[0][0].header['OBJECT']
-start = s[0][0].header['MJD-OBS']
-end = s[0][0].header['MJD-END']
-airmass1 = s[0][0].header['HIERARCH ESO TEL AIRM START']
-airmass2 = s[0][0].header['HIERARCH ESO TEL AIRM END']
-seeing1 = s[0][0].header['HIERARCH ESO TEL AMBI FWHM START']
-seeing2 = s[0][0].header['HIERARCH ESO TEL AMBI FWHM END']
+for j in range(3):
+    date = s[j][0].header['DATE']
+    date_obs = s[j][0].header['DATE-OBS']
+    obj = s[j][0].header['OBJECT']
+    start = s[j][0].header['MJD-OBS']
+    end = s[j][0].header['MJD-END']
+    airmass1 = s[j][0].header['HIERARCH ESO TEL AIRM START']
+    airmass2 = s[j][0].header['HIERARCH ESO TEL AIRM END']
+    seeing1 = s[j][0].header['HIERARCH ESO TEL AMBI FWHM START']
+    seeing2 = s[j][0].header['HIERARCH ESO TEL AMBI FWHM END']
+    
+        
+    print(date)
+    print(date_obs)
+    print(obj)
+    print(start)
+    print(end)
+    print(airmass1)
+    print(airmass2)
+    print(seeing1)
+    print(seeing2)
+
 for i in range(len(data)):
     waves.append(data[i]['WAVE'][0])
     fluxes.append(data[i]['FLUX'][0])

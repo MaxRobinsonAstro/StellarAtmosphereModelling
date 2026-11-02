@@ -17,30 +17,16 @@ def frames(file_type, file_amount):
 MasterBias = ccdproc.combine(frames('Bias', 5), 'MasterBias.fits', 'median', overwrite_output = True)
 
 """Dark files"""
-n = 5
-dark = []
-for i in range(1, n + 1):
-    dark.append(fits.getdata(f'OneDrive - Maynooth University\Project\OHP_sample_data\Dark-{i:04d}.fits'))
 
-dark = CCDData(dark, unit = 'adu')
-MasterDark = ccdproc.combine(dark, 'MasterDark.fits', 'median', overwrite_output = True)
+MasterDark = ccdproc.combine(frames('Dark', 5), 'MasterDark.fits', 'median', overwrite_output = True)
 
 """R_flat files"""
-n = 5
-R_flat = []
-for i in range(1, n + 1):
-    R_flat.append(fits.getdata(f'OneDrive - Maynooth University\Project\OHP_sample_data\R_flat-{i:04d}.fits'))
-    
-R_flat = CCDData(R_flat, unit = 'adu')
-MasterR_flat = ccdproc.combine(R_flat, 'MasterR_flat.fits', 'median', overwrite_output = True)
+
+MasterR_flat = ccdproc.combine(frames('R_flat', 5), 'MasterR_flat.fits', 'median', overwrite_output = True)
 
 """R science files"""
 n = 10
-R_sci = []
-for i in range(1, n + 1):
-    R_sci.append(fits.getdata(f'OneDrive - Maynooth University\Project\OHP_sample_data\R_dumbbell_30s-{i:04d}.fits'))
-    
-R_sci = CCDData(R_sci, unit = 'adu')
+R_sci = frames('R_dumbbell_30s', n)
 
 BiasSubDark = ccdproc.subtract_bias(MasterDark, MasterBias)
 BiasSubR_flat = ccdproc.subtract_bias(MasterR_flat, MasterBias)
