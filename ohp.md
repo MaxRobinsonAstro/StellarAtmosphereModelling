@@ -1,6 +1,7 @@
 ##OHP stars observable with RA, Dec and Magnitude
 
 | Star | Mag | RA | Dec | SpType |
+|---|---|---|---|---|
 | HIP 20884 / 44 Eri | 4.6 | 67.13 | 1.38 | B |
 | HIP 17527 / 18 Tau | 5.1 | 56.29 | 24.8 | B |
 | HIP 30448 / HD 44783 | 5.8 | 96 | 8.89 | B |
