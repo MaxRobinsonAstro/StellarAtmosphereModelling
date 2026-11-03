@@ -1,4 +1,4 @@
-##OHP stars observable with RA, Dec and Magnitude
+### OHP stars observable with RA, Dec and Magnitude
 
 | Star | Mag | RA | Dec | SpType |
 |---|---|---|---|---|
