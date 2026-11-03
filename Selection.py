@@ -1,5 +1,7 @@
 import numpy as np
 from astropy.io import fits
+from astropy.coordinates import Angle
+import astropy.units as u
 import matplotlib.pyplot as plt
 import pandas as pd
 
@@ -41,22 +43,33 @@ for d in dfs[1:3]:
     d = d.loc[:, ~d.columns.duplicated()]
     df = df.merge(d, on = 'Name', how = 'left')
     
-df0 = df.merge(df_34, on = 'Name', how = 'left')
+df = df.merge(df_34, on = 'Name', how = 'left')
+
+df['M'] = 4.83 - 2.5 * np.log10(df['L']) + df['Av']
+df['m'] = df['M'] -5 + 5 * np.log10(df['Dist'])
+
+df0 = df
 
 disk = ['Debris', 'Hybrid', 'Protoplanetary', '--']
-amount = df0['DiscClass'].value_counts()
+amount = df['DiscClass'].value_counts()
 plt.figure(figsize=(9,5))
 plt.bar(disk, amount, width = 0.65, color = 'tomato', edgecolor = 'white')
 plt.xlabel('Disk Classification')
 plt.ylabel('Number of Disks')
 
-df = df0[df0['DiscClass'] != 'Protoplanetary'].copy()
-df = df0[df0['DiscClass'] !=  'Hybrid'].copy()
-df = df0[df0['DiscClass'] !=  '--'].copy()
+df['DiscClass'] = df['DiscClass'].str.strip()
+df = df[~(df['DiscClass'] == 'Protoplanetary')].copy()
+df = df[~(df['DiscClass'] ==  'Hybrid')].copy()
+df = df[~(df['DiscClass'] ==  '--')].copy()
+
+print(df['DiscClass'])
 
 df['SpType'] = df['SpType'].str[0]
 order = ['O', 'B', 'A', 'F', 'G', 'K', 'M']
 counts = df['SpType'].value_counts().reindex(order)
+
+df['RAJ2000'] = Angle(df['RAJ2000'], unit = u.hourangle).degree
+df['DEJ2000'] = Angle(df['DEJ2000'], unit = u.deg).degree
 
 plt.figure(figsize=(9,5))
 plt.bar(order, counts, width = 0.75, color = 'tomato', edgecolor = 'white')
@@ -89,8 +102,7 @@ ax.set_zlabel('$z$ (pc)')
 polar plot with RA and dec with OHP limits and colorbar of m
 """
 
-df['M'] = 4.83 - 2.5 * np.log10(df['L']) + df['Av']
-df['m'] = df['M'] -5 + 5 * np.log10(df['Dist'])
+
 
 fig = plt.figure(figsize=(9,8))
 ax = fig.add_subplot(111, projection = 'polar')
@@ -98,7 +110,7 @@ ax = fig.add_subplot(111, projection = 'polar')
 j = ax.scatter(df['RAJ2000'] * np.pi / 180, df['DEJ2000'], c = df['m'], cmap = 'nipy_spectral_r')
 ax.set_xlabel('RA')
 ax.set_ylabel('DEC')
-f = 43.9317 + (25 - 90)
+f = 43.9317 + (35 - 90)
 ax.axhline(f, c = 'tomato', linestyle = '--')
 
 cbar = plt.colorbar(j)
@@ -152,5 +164,12 @@ plt.bar(order, counts, width = 0.75, color = 'tomato', edgecolor = 'white')
 plt.xlabel('Spectral Type')
 plt.ylabel('Number of Stars')
 
+df.to_pickle('OneDrive - Maynooth University/Project/obs.pkl')
+
+columns = ['Name', 'SimbadID', 'RAJ2000', 'DEJ2000', 'SpType', 'm']
+
+df = df.sort_values('m')
+print(df[columns][:])
+df[columns].to_csv('OneDrive - Maynooth University/Project/OHP_stars.txt', sep = '\t', index = False)
 
 plt.show()
