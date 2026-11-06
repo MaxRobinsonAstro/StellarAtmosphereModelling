@@ -32,7 +32,7 @@ for name in filters:
 ax2.set_ylim(0, 1.2)
 ax2.legend()
 
-star = df0.loc[df0['Name'] == 'HIP 84543      '].iloc[0]
+star = df0.loc[df0['Name'] == 'HIP 84543'].iloc[0]
 B_mag = star['BTmag']
 V_mag = star['VTmag']
 K_mag = star['Ksmag']
@@ -41,13 +41,37 @@ print(f'BTmag: {B_mag}')
 print(f'VTmag: {V_mag}')
 print(f'Ksmag: {K_mag}')
 
+F_syn = []
 for name in filters:
     f = lib[name]
     #f.info(show_zeropoints = True)
     fluxes = f.get_flux(wave * 10, flux)
     mag = -2.5 * np.log10(fluxes.value) - f.Vega_zero_mag
+    F_syn.append(mag)
     print(f'{f.name}: {mag}')
 
+F_syn = np.array(F_syn)
+F_cat = np.array([B_mag, V_mag, K_mag])
+
+S = 2 * np.sum(F_cat * F_syn) / np.sum(F_syn)**2
+flux_S = flux * S
+
+
+plt.figure(figsize=(12,5))
+plt.plot(wave,flux_S,linewidth = 0.1, c = 'cyan', alpha = 0.8)
+
+plt.ylim(0,2e-12)
+#ax1.axvline(364.7, linewidth = 0.5, c = 'r')
+plt.xlim(0,2500)
+plt.xlabel(r'Wavelength (nm)')
+plt.ylabel(r'Flux ($erg\ cm^{-2} s^{-1} \AA^{-1}$)')
+
+for name in filters:
+    f = lib[name]
+    #f.info(show_zeropoints = True)
+    fluxes = f.get_flux(wave * 10, flux_S)
+    mag = -2.5 * np.log10(fluxes.value) - f.Vega_zero_mag
+    print(f'{f.name}: {mag}')
 
 plt.show()
 

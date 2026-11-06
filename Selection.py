@@ -45,7 +45,7 @@ for d in dfs[1:3]:
     
 df = df.merge(df_34, on = 'Name', how = 'left')
 
-df['Name'] = df['Name'].str.replace(r'^\s+|\s+$', '', regex = True)
+df['Name'] = df['Name'].str.strip()
 
 df['M'] = 4.83 - 2.5 * np.log10(df['L']) + df['Av']
 df['m'] = df['M'] -5 + 5 * np.log10(df['Dist'])
