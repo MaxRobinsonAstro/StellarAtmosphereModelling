@@ -1,7 +1,6 @@
 """
 Spectra for HIP_84543
 """
-import pyphot
 import numpy as np
 import matplotlib.pyplot as plt
 from astropy.io import fits
@@ -143,23 +142,5 @@ plt.ylabel(r'Flux ($erg\ cm^{-2} s^{-1} \AA^{-1}$)')
 plt.legend()
 
 plt.savefig("GitHub/StellarAtmosphereModelling/figures/HIP_84543_VIStoNIR")
-"""
-lib = pyphot.get_library()
 
-wave = np.asarray(wave, dtype=float) * 10
-flux = np.asarray(flux, dtype=float)
-
-filters = ['GROUND_COUSINS_R', 'GROUND_COUSINS_I', 'GROUND_JOHNSON_B', 'GROUND_JOHNSON_U', 'GROUND_JOHNSON_V']
-sed = f.get_flux(wave,flux)
-sed1 = f.Vega_zero_flux
-mag = -2.5 * np.log10(f.get_flux(wave,flux) / f.Vega_zero_flux)
-print(mag)
-
-plt.figure(figsize=(9,5))
-
-for name in filters:
-    f = lib[name]
-    plt.plot(f.wavelength, f.transmit, label = name)
-    plt.ylim(0, 1)
-"""
 plt.show()
