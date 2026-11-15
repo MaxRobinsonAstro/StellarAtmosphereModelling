@@ -7,6 +7,7 @@ import pandas as pd
 
 plt.style.use('dark_background')
 plt.rcParams.update({
+    'text.usetex' : True,
     'font.family' : 'serif',
     'font.serif' : 'cmr10',
     'mathtext.fontset' : 'cm',
