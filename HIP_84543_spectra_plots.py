@@ -1,6 +1,8 @@
 """
 Plots for HIP_84543
 """
+import os
+os.environ['PATH'] += os.pathsep + r'C:\Users\Owner\AppData\Local\Programs\MiKTeX\miktex\bin\x64' 
 import matplotlib.pyplot as plt
 import numpy as np
 from pathlib import Path
@@ -13,9 +15,9 @@ def background():
     
 background()  
 plt.rcParams.update({
+    'text.usetex' : True,
     'font.family' : 'serif',
-    'font.serif' : 'cmr10',
-    'mathtext.fontset' : 'cm',
+    'font.serif' : ['Computer Modern Roman'],
     'axes.formatter.use_mathtext' : True,
     'axes.unicode_minus' : False,
     'font.size' : 12 })

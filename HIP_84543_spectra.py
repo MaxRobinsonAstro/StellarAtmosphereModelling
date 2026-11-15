@@ -90,9 +90,9 @@ lam = np.loadtxt("OneDrive - Maynooth University/Project/HIP_84543/bosz2024_wave
 
 plt.style.use('dark_background')
 plt.rcParams.update({
+    'text.usetex' : True,
     'font.family' : 'serif',
     'font.serif' : 'cmr10',
-    'mathtext.fontset' : 'cm',
     'axes.formatter.use_mathtext' : True,
     'axes.unicode_minus' : False,
     'font.size' : 12 })
