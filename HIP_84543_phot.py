@@ -99,6 +99,24 @@ plt.xlim(0,2500)
 plt.xlabel(r'Wavelength (nm)')
 plt.ylabel(r'Flux ($erg\ cm^{-2} s^{-1} \AA^{-1}$)')
 
+model_array = np.loadtxt("OneDrive - Maynooth University/Project/HIP_84543/mp_t6500_g+4.5_m+0.00_a+0.00_c+0.00_v0_rorig_noresam.txt") * 2 * 1e-19 #bosz model
+#model = np.sum(4 * np.pi * model_array[:,1], model_array[:,2], axis = 1)
+model = (4 * np.pi * model_array[:,1] + model_array[:,2]) * 0.23
+res = len(model) / 15
+delta_R = (np.log(320000) - np.log(500)) / (7500 * res / 500)
 
+lam_R = np.zeros(len(model))
+for i in range(len(model)):
+    lam_R[i] = np.exp(np.log(500) + delta_R * i) / 10
+
+plt.figure(figsize=(12,5))
+plt.plot(lam_R,model, c = 'cyan', lw = 0.04, alpha = 0.5)
+plt.plot(wave,flux_phot, c = 'red', lw = 0.75, alpha = 0.5)
+
+plt.ylim(0,1.5e-12)
+#ax1.axvline(364.7, linewidth = 0.5, c = 'r')
+plt.xlim(300,600)
+plt.xlabel(r'Wavelength (nm)')
+plt.ylabel(r'Flux ($erg\ cm^{-2} s^{-1} \AA^{-1}$)')
 
 plt.show()
