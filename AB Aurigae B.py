@@ -24,38 +24,43 @@ plt.rcParams.update({
 """Bias files"""
 
 MasterBias = ccdproc.combine(frames('Bias_12_11', 5), 'MasterBias.fits', 'median', overwrite_output = True)
-plt.figure(figsize = (5,5))
-plt.imshow(MasterBias.data, cmap = 'magma', origin = 'lower', norm = LogNorm())
+#plt.figure(figsize = (5,5))
+#plt.imshow(MasterBias.data, cmap = 'magma', origin = 'lower', norm = LogNorm())
+#plt.colorbar()
 
 """Dark files"""
 
 MasterDark = ccdproc.combine(frames('Dark_12_11', 5), 'MasterDark.fits', 'median', overwrite_output = True)
-plt.figure(figsize = (5,5))
-plt.imshow(MasterDark.data, cmap = 'magma', origin = 'lower', norm = LogNorm())
+#plt.figure(figsize = (5,5))
+dark_image = MasterDark.data / 30
+MasterDark = CCDData(dark_image, unit = 'adu')
+#plt.imshow(dark_image, cmap = 'magma', origin = 'lower', norm = LogNorm())
+#plt.colorbar()
 
-"""R_flat files"""
+"""B_flat files"""
 
-MasterR_flat = ccdproc.combine(frames('B_Flats_12_11', 5), 'MasterR_flat.fits', 'median', overwrite_output = True)
-plt.figure(figsize = (5,5))
-plt.imshow(MasterR_flat.data, cmap = 'magma', origin = 'lower', norm = LogNorm())
+MasterB_flat = ccdproc.combine(frames('B_Flats_12_11', 5), 'MasterR_flat.fits', 'median', overwrite_output = True)
+#plt.figure(figsize = (5,5))
+#plt.imshow(MasterR_flat.data, cmap = 'magma', origin = 'lower', norm = LogNorm())
+#plt.colorbar()
 
 """B science files"""
 n = 2
 R_sci = frames('B_AB Aurigae', n)
 
 BiasSubDark = ccdproc.subtract_bias(MasterDark, MasterBias)
-BiasSubR_flat = ccdproc.subtract_bias(MasterR_flat, MasterBias)
+BiasSubR_flat = ccdproc.subtract_bias(MasterB_flat, MasterBias)
 
 BiasSubR_sci = []
 for i in range(n):
     BiasSubR_sci.append(ccdproc.subtract_bias(R_sci[i], MasterBias))
 
-DarkSubR_flat = ccdproc.subtract_dark(BiasSubR_flat, BiasSubDark, dark_exposure = (300.0 * u.second),
+DarkSubR_flat = ccdproc.subtract_dark(BiasSubR_flat, BiasSubDark, dark_exposure = (10.0 * u.second),
                                     data_exposure = (0.6 * u.second), scale = True)
 
 DarkSubR_sci = []
 for i in range(n):
-    DarkSubR_sci.append(ccdproc.subtract_dark(BiasSubR_sci[i], BiasSubDark, dark_exposure = (300.0 * u.second),
+    DarkSubR_sci.append(ccdproc.subtract_dark(BiasSubR_sci[i], BiasSubDark, dark_exposure = (10.0 * u.second),
                                     data_exposure = (10.0 * u.second), scale = True))
 
 FinalR_sci = []
@@ -74,9 +79,9 @@ image = MasterR_sci.data
 plt.figure(figsize = (5,5))
 plt.hist(image.flat, 1000, log = True)
 
-vmin, vmax = np.percentile(image, [1, 99])
+vmin, vmax = np.percentile(image, [1, 99.5])
 vmin = 1
 plt.figure(figsize = (5,5))
-plt.imshow(image, cmap = 'Blues', origin = 'lower', norm = LogNorm(vmin, vmax))
+plt.imshow(image, cmap = 'magma', origin = 'lower', norm = LogNorm(vmin, vmax))
 plt.colorbar()
 plt.show()
