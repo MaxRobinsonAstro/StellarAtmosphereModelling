@@ -5,7 +5,9 @@ import os
 os.environ['PATH'] += os.pathsep + r'C:\Users\Owner\AppData\Local\Programs\MiKTeX\miktex\bin\x64' 
 import matplotlib.pyplot as plt
 import numpy as np
-from pathlib import Path
+import sys
+sys.path.append(r'GitHub/StellarAtmosphereModelling')
+from HIP_84543_spectra import wave, flux, flux_slitloss, o
 
 def background():
     if input('Dark plot? y or n:') == 'y':
@@ -22,8 +24,6 @@ plt.rcParams.update({
     'axes.unicode_minus' : False,
     'font.size' : 12 })
 
-input_file = Path(__file__).parent / 'HIP_84543.txt'
-wave, flux, err = np.loadtxt(input_file, delimiter = '\t', unpack = True)
 
 """plt.figure(figsize=(12,5))
 colours = ['cyan','orange','red']
@@ -37,31 +37,23 @@ plt.ylabel(r'Flux ($erg\ cm^{-2} s^{-1} \AA^{-1}$)')"""
 
 plt.figure(figsize=(12,5))
 plt.plot(wave,flux,linewidth = 0.1, c = 'cyan', alpha = 0.8)
-#plt.plot(lam,f+w, c = 'violet', linewidth = 0.1, alpha = 0.8)
-plt.ylim(0,0.5e-12)
+plt.plot(wave,flux_slitloss,linewidth = 0.1, c = 'cyan', alpha = 0.8)
+plt.ylim(0,1.5e-12)
 plt.axvline(364.7, linewidth = 0.5, c = 'r')
-plt.xlim(0,2500)
+plt.xlim(wave[o],2500)
 plt.xlabel(r'Wavelength (nm)')
 plt.ylabel(r'Flux ($erg\ cm^{-2} s^{-1} \AA^{-1}$)')
 
-plt.figure(figsize=(12,5))
-plt.plot(wave,err, c = 'red')
-plt.ylim(0,0.5e-12)
+
 
 plt.figure(figsize=(12,5))
-#plt.plot(lam,f+w, c = 'cyan', linewidth = 0.1, alpha = 0.8)
+plt.plot(wave,flux,linewidth = 0.1, c = 'cyan', alpha = 0.8)
+#plt.ylim(0,.2e-12)
+plt.ylim(1e-14,1e-12)
 plt.axvline(364.7, linewidth = 0.5, c = 'r')
-plt.xlabel(r'Wavelength (nm)')
-plt.ylabel(r'Flux ($erg\ cm^{-2} s^{-1} \AA^{-1}$)')
-plt.xlim(0,2500)
-
-plt.figure(figsize=(12,5))
-plt.plot(wave,flux,linewidth = 1, c = 'cyan', alpha = 0.8)
-plt.ylim(0,.2e-12)
-plt.axvline(364.7, linewidth = 0.5, c = 'r')
-#plt.yscale('log')
+plt.yscale('log')
 #plt.xscale('log')
-plt.xlim(910,1130)
+plt.xlim(o,800)
 plt.xlabel(r'Wavelength (nm)')
 plt.ylabel(r'Flux ($erg\ cm^{-2} s^{-1} \AA^{-1}$)')
 plt.legend()

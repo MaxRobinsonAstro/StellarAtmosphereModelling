@@ -21,11 +21,11 @@ def planck_law(wavelength, temperature):
 airmass = 1.5
 sigma_dimm = 2.16
 
-def dimm(wave, flux, sigma_dimm, airmass, width):
+def dimm(w, f, sigma_dimm, airmass, width):
     """Calculates T (slit loss factor"""
-    sigma_lam = sigma_dimm * (wave/500)**(-0.2) * airmass**(0.6)
+    sigma_lam = sigma_dimm * (w/500)**(-0.2) * airmass**(0.6)
     T = special.erf(np.sqrt(np.log(2)) * width / sigma_lam)
-    return flux / T
+    return f / T
 
 
 files = ['OneDrive - Maynooth University/Project/HIP_84543/HIP_84543_UVB.fits',
@@ -42,7 +42,7 @@ for f in files:
         e.append(data['ERR'][0])
 
 """Plotting arms before concatenating"""
-colours = ['cyan','orange','red']
+colours = ['cyan','green','red']
 plt.figure(figsize=(12,5))
 for i in range(3):
     plt.plot(waves[i],fluxes[i],linewidth = 0.1, alpha = 0.8, color = colours[i])
@@ -62,22 +62,34 @@ waves[2] = waves[2][arg2:]  #all NIR arrays from arg1 onward
 fluxes[2] = fluxes[2][arg2:]
 e[2] = e[2][arg2:]
 
-fluxes[0] = dimm(waves[0], fluxes[0], sigma_dimm, airmass, 1) #applying DIMM seeing to the fluxes for different slit widths on each arm
-fluxes[1] = dimm(waves[1], fluxes[1], sigma_dimm, airmass, 0.9)
-fluxes[2] = dimm(waves[2], fluxes[2], sigma_dimm, airmass, 0.6)
+o = 300
+waves[0] = waves[0][o:]
+fluxes[0] = fluxes[0][o:]
+e[0] = e[0][o:]
 
-diff1 = np.abs((fluxes[0][-1] - fluxes[1][0]) / fluxes[0][-1] * 100) #percentage difference between arms
-diff2 = np.abs((fluxes[1][-1] - fluxes[2][0]) / fluxes[1][-1] * 100)
-print(f'UVB-VIS: {diff1:.2f}%, VIS-NIR: {diff2:.2f}%')
-
-
-
-
-print(waves[1][arg1])
-print(waves[2][arg2])
 wave = np.concatenate(waves) #concatenating each arm into one array
 flux = np.concatenate(fluxes)
 err = np.concatenate(e)
+
+
+fluxes_slitloss = fluxes.copy()
+fluxes_slitloss[0] = dimm(waves[0], fluxes_slitloss[0], sigma_dimm, airmass, 1) #applying DIMM seeing to the fluxes for different slit widths on each arm
+fluxes_slitloss[1] = dimm(waves[1], fluxes_slitloss[1], sigma_dimm, airmass, 0.9)
+fluxes_slitloss[2] = dimm(waves[2], fluxes_slitloss[2], sigma_dimm, airmass, 0.6)
+
+flux_slitloss = np.concatenate(fluxes_slitloss)
+
+diff1 = np.abs((fluxes[0][-1] - fluxes[1][0]) / fluxes[0][-1] * 100) #percentage difference between arms
+diff2 = np.abs((fluxes[1][-1] - fluxes[2][0]) / fluxes[1][-1] * 100)
+print(f'Before Slitloss UVB-VIS: {diff1:.2f}%, VIS-NIR: {diff2:.2f}%')
+
+diff1 = np.abs((fluxes_slitloss[0][-1] - fluxes_slitloss[1][0]) / fluxes_slitloss[0][-1] * 100) #percentage difference between arms
+diff2 = np.abs((fluxes_slitloss[1][-1] - fluxes_slitloss[2][0]) / fluxes_slitloss[1][-1] * 100)
+print(f'After Slitloss UVB-VIS: {diff1:.2f}%, VIS-NIR: {diff2:.2f}%')
+
+
+
+
 
 output_file = Path(__file__).parent / 'HIP_84543.txt'
 
@@ -101,9 +113,17 @@ plt.figure(figsize=(12,5))
 for i in range(3):
     plt.plot(waves[i],fluxes[i],linewidth = 0.1, alpha = 0.8, color = colours[i])
     plt.ylim(0,2e-12)
+plt.xlabel(r'Wavelength (nm)')
+plt.ylabel(r'Flux ($erg\ cm^{-2} s^{-1} \AA^{-1}$)')
+
+plt.figure(figsize=(12,5))
+for i in range(3):
+    plt.plot(waves[i],fluxes_slitloss[i],linewidth = 0.1, alpha = 0.8, color = colours[i])
+plt.ylim(0,2e-12)
 plt.plot(wave,planck_law(wave, 5500), c ='magenta')
 plt.xlabel(r'Wavelength (nm)')
 plt.ylabel(r'Flux ($erg\ cm^{-2} s^{-1} \AA^{-1}$)')
+#plt.yscale('log')
 
 plt.savefig("GitHub/StellarAtmosphereModelling/figures/HIP_84543_separate_after_slit")
 
