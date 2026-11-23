@@ -79,8 +79,7 @@ image = MasterR_sci.data
 plt.figure(figsize = (5,5))
 plt.hist(image.flat, 1000, log = True)
 
-vmin, vmax = np.percentile(image, [1, 99.5])
-vmin = 1
+vmin, vmax = np.percentile(image, [10, 99.5])
 plt.figure(figsize = (5,5))
 plt.imshow(image, cmap = 'magma', origin = 'lower', norm = LogNorm(vmin, vmax))
 plt.colorbar()

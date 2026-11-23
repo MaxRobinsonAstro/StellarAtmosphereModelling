@@ -8,6 +8,7 @@ import numpy as np
 import sys
 sys.path.append(r'GitHub/StellarAtmosphereModelling')
 from HIP_84543_spectra import wave, flux, flux_slitloss, o
+from HIP_84543_phot import flux_phot
 
 def background():
     if input('Dark plot? y or n:') == 'y':
@@ -36,11 +37,13 @@ plt.ylabel(r'Flux ($erg\ cm^{-2} s^{-1} \AA^{-1}$)')"""
 
 
 plt.figure(figsize=(12,5))
-plt.plot(wave,flux,linewidth = 0.1, c = 'cyan', alpha = 0.8)
-plt.plot(wave,flux_slitloss,linewidth = 0.1, c = 'cyan', alpha = 0.8)
+plt.plot(wave,flux,linewidth = 0.3, c = 'cyan', alpha = 0.8, label = 'original')
+plt.plot(wave,flux_slitloss,linewidth = 0.3, c = 'white', alpha = 0.8, label = 'after slitloss')
+plt.plot(wave,flux_phot,linewidth = 0.3, c = 'pink', alpha = 0.8, label = 'after mag scaling')
 plt.ylim(0,1.5e-12)
 plt.axvline(364.7, linewidth = 0.5, c = 'r')
-plt.xlim(wave[o],2500)
+plt.xlim(wave[o],1000)
+plt.legend()
 plt.xlabel(r'Wavelength (nm)')
 plt.ylabel(r'Flux ($erg\ cm^{-2} s^{-1} \AA^{-1}$)')
 

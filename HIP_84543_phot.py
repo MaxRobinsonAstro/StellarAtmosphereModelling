@@ -2,14 +2,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sys
 sys.path.append(r'GitHub/StellarAtmosphereModelling')
-from HIP_84543_spectra import wave, flux
+from HIP_84543_spectra import wave, flux_slitloss
 from Selection import df0
 from astropy.io import fits
 from scipy import stats
 
 
 fig, ax1 = plt.subplots(figsize=(12,5))
-ax1.plot(wave,flux,linewidth = 0.25, c = 'cyan', alpha = 0.8)
+ax1.plot(wave,flux_slitloss,linewidth = 0.25, c = 'cyan', alpha = 0.8)
 
 ax1.set_ylim(0,2e-12)
 #ax1.axvline(364.7, linewidth = 0.5, c = 'r')
@@ -53,7 +53,7 @@ ax2.plot(wave_f, T_lam, lw = 0.8)
 flux_binned = np.zeros(len(wave_f))
 min_phot = np.where(wave == 375)[0][0]
 max_phot = np.where(wave == 740)[0][0]
-flux_binned, wave_binned, binnumber = stats.binned_statistic(wave[min_phot:max_phot], flux[min_phot:max_phot], bins = len(wave_f), statistic = 'mean')
+flux_binned, wave_binned, binnumber = stats.binned_statistic(wave[min_phot:max_phot], flux_slitloss[min_phot:max_phot], bins = len(wave_f), statistic = 'mean')
 
 for j in range(len(wave_binned) - 1):
     wave_binned[j] = (wave_binned[j] + wave_binned[j+1]) / 2
@@ -70,7 +70,7 @@ print(f'Vmag: {magV}')
 print(f'Rmag: {magR}')
 
 plt.figure(figsize=(12,5))
-plt.plot(wave,flux, c = 'red', lw = 0.1, alpha = 0.5)
+plt.plot(wave,flux_slitloss, c = 'red', lw = 0.1, alpha = 0.5)
 
 plt.ylim(0,1.5e-12)
 #ax1.axvline(364.7, linewidth = 0.5, c = 'r')
@@ -79,7 +79,7 @@ plt.xlabel(r'Wavelength (nm)')
 plt.ylabel(r'Flux ($erg\ cm^{-2} s^{-1} \AA^{-1}$)')
 
 S = 10**(-0.4 * (np.abs(B_mag - magB)))
-flux_phot = flux * S
+flux_phot = flux_slitloss * S
 flux_binned_phot = flux_binned * S
 
 magB_scaled = -2.5 * np.log10((np.sum(flux_binned_phot * transmit_f[0])/np.sum(transmit_f[0])) / 632.5e-11)
