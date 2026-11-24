@@ -14,10 +14,10 @@ h = 6.62607015e-27  # in erg cgs
 c = 2.99792458e10  
 k = 1.380649e-16
 
-def planck_law(wavelength, temperature):
+def planck_law(wavelength, temperature, dist):
     """Planck's Law gives the blackbody curve"""
     exponent = (h * c) / (wavelength * 1e-7 * k * temperature)
-    sr = 2 * 1e-27 * (2 * h * c**2) / ((wavelength*1e-7)**5 * (np.exp(exponent) - 1))
+    sr = (1 / (4 * np.pi * (dist * 3.0857e10)**2)) * (2 * h * c**2) / ((wavelength*1e-7)**5 * (np.exp(exponent) - 1))
     return sr
 
 
@@ -129,11 +129,6 @@ print(f'After Slitloss UVB-VIS: {diff1:.2f}%, VIS-NIR: {diff2:.2f}%')
 
 star = df0.loc[df0['Name'] == 'HIP 40594'].iloc[0]
 
-
-
-
-
-
 plt.figure(figsize=(12,5))
 plt.plot(wave,err, c = 'red')
 plt.ylim(0,0.5e-12)
@@ -150,7 +145,6 @@ print(f'Rmag: {R_mag}')
 filters = ['OneDrive - Maynooth University/Project/BESSEL_B.fit',
            'OneDrive - Maynooth University/Project/BESSEL_V.fit',
            'OneDrive - Maynooth University/Project/BESSEL_R.fit']
-colours = ['cyan','green','red']
 names = ['B', 'V', 'R']
 
 transmit_f = []
@@ -195,24 +189,32 @@ print(f'Vmag: {magV_scaled}')
 print(f'Rmag: {magR_scaled}')
 
 
-plt.figure(figsize=(12,5))
+fig, ax1 = plt.subplots(figsize=(10,5))
+ax2 = ax1.twinx()
+colours1 = ['red', 'blue', 'green']
 for i in range(3):
-    plt.plot(waves[i],fluxes[i],linewidth = 0.1, alpha = 0.8, color = colours[i])
-    plt.plot(waves[i],fluxes_slitloss[i],linewidth = 0.1, alpha = 0.8, color = colours[i])
-    plt.plot(waves[i],fluxes_phot[i],linewidth = 0.1, alpha = 0.8, color = colours[i])
+    ax1.plot(waves[i],fluxes[i],linewidth = 0.2, alpha = 0.3, color = colours1[i])
+    ax1.plot(waves[i],fluxes_slitloss[i],linewidth = 0.2, alpha = 0.6, color = colours1[i])
+    ax1.plot(waves[i],fluxes_phot[i],linewidth = 0.2, alpha = 0.9, color = colours1[i])
+    ax2.plot(wave_f, transmit_f[i], lw = 0.5, color = colours[i], label = names[i])
 temp = star['Teff']
-plt.plot(wave,planck_law(wave, temp), c ='magenta')
-plt.ylim(0,1e-11)
-plt.xlim(o, 1500)
-plt.xlabel(r'Wavelength (nm)')
-plt.ylabel(r'Flux ($erg\ cm^{-2} s^{-1} \AA^{-1}$)')
+dist = star['Dist']
+ax1.plot(wave,planck_law(wave, temp, dist), c ='magenta', lw = '0.4', label = 'Blackbody Curve')
+ax1.set_ylim(0,1e-11)
+ax2.set_ylim(0, 1.2)
+ax1.set_xlim(o, 900)
+ax1.set_xlabel(r'Wavelength (nm)')
+ax1.set_ylabel(r'Flux ($erg\ cm^{-2} s^{-1} \AA^{-1}$)')
+ax2.set_ylabel(r'Filter Transmission')
+ax1.legend()
+ax2.legend()
 
 plt.savefig("GitHub/StellarAtmosphereModelling/figures/HIP_40594_corrections")
 
-plt.figure(figsize=(12,5))
+plt.figure(figsize=(10,5))
 plt.plot(wave,flux,linewidth = 0.3, c = 'blue', alpha = 0.8, label = 'uncorrected')
 plt.plot(wave,flux_slitloss,linewidth = 0.3, c = 'purple', alpha = 0.8, label = 'slit loss corrected')
-plt.plot(wave,flux_phot,linewidth = 0.3, c = 'red', alpha = 0.8, label = 'flux corrected')
+plt.plot(wave,flux_phot,linewidth = 0.3, c = 'red', alpha = 0.8, label = 'slit loss + flux corrected')
 plt.ylim(0,1e-11)
 plt.axvline(364.7, linewidth = 0.5, c = 'r')
 plt.xlim(o,600)
