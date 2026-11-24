@@ -40,6 +40,27 @@ for f in files:
         waves.append(data['WAVE'][0])
         fluxes.append(data['FLUX'][0])
         e.append(data['ERR'][0])
+        
+        date = s[0].header['DATE']
+        date_obs = s[0].header['DATE-OBS']
+        obj = s[0].header['OBJECT']
+        start = s[0].header['MJD-OBS']
+        end = s[0].header['MJD-END']
+        airmass1 = s[0].header['HIERARCH ESO TEL AIRM START']
+        airmass2 = s[0].header['HIERARCH ESO TEL AIRM END']
+        seeing1 = s[0].header['HIERARCH ESO TEL AMBI FWHM START']
+        seeing2 = s[0].header['HIERARCH ESO TEL AMBI FWHM END']
+        
+            
+        print(date)
+        print(date_obs)
+        print(obj)
+        print(start)
+        print(end)
+        print(airmass1)
+        print(airmass2)
+        print(seeing1)
+        print(seeing2)
 
 """Plotting arms before concatenating"""
 colours = ['cyan','green','red']
