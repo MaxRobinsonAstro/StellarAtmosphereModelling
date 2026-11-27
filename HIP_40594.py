@@ -9,6 +9,7 @@ import sys
 sys.path.append(r'GitHub/StellarAtmosphereModelling')
 from Selection import df0
 from scipy import stats
+from labellines import labelLines
 
 h = 6.62607015e-27  # in erg cgs
 c = 2.99792458e10  
@@ -188,6 +189,7 @@ print(f'Bmag: {magB_scaled}')
 print(f'Vmag: {magV_scaled}')
 print(f'Rmag: {magR_scaled}')
 
+wave_planck = np.linspace(10,2500,1000)
 
 fig, ax1 = plt.subplots(figsize=(10,5))
 ax2 = ax1.twinx()
@@ -199,7 +201,7 @@ for i in range(3):
     ax2.plot(wave_f, transmit_f[i], lw = 0.5, color = colours[i], label = names[i])
 temp = star['Teff']
 dist = star['Dist']
-ax1.plot(wave,planck_law(wave, temp, dist), c ='magenta', lw = '0.4', label = 'Blackbody Curve')
+ax1.plot(wave_planck,planck_law(wave_planck, temp, dist), c ='magenta', lw = '0.4', label = 'Blackbody Curve')
 ax1.set_ylim(0,1e-11)
 ax2.set_ylim(0, 1.2)
 ax1.set_xlim(o, 900)
@@ -215,13 +217,43 @@ plt.figure(figsize=(10,5))
 plt.plot(wave,flux,linewidth = 0.3, c = 'blue', alpha = 0.8, label = 'uncorrected')
 plt.plot(wave,flux_slitloss,linewidth = 0.3, c = 'purple', alpha = 0.8, label = 'slit loss corrected')
 plt.plot(wave,flux_phot,linewidth = 0.3, c = 'red', alpha = 0.8, label = 'slit loss + flux corrected')
-plt.ylim(0,1e-11)
-plt.axvline(364.7, linewidth = 0.5, c = 'r')
-plt.xlim(o,600)
+plt.ylim(0,1.1e-11)
+R_H = 109737.31 #cm^-1
+for i in range(6,18):
+    H = 1 / (R_H * (1 / 4 - 1 / i**2)) * 1e7
+    print(H)
+    plt.axvline(H, linewidth = 0.3, linestyle = '--', c = 'black')
+    if i == 6:
+        H_label = 'H$\delta$'
+    elif i == 7:
+        H_label = 'H$\epsilon$'
+    else:
+        H_label = f'H{i}'
+        
+    if i <=9:
+        plt.text(H, 0.13e-11, H_label)
+    else:
+        plt.text(H, (10 / (i)) * 0.95e-11, H_label)
+plt.xlim(o+69,415)
 plt.xlabel(r'Wavelength (nm)')
 plt.ylabel(r'Flux ($erg\ cm^{-2} s^{-1} \AA^{-1}$)')
-plt.legend()
+plt.legend(fontsize = 'x-small', loc = 'upper right')
 
-plt.savefig("GitHub/StellarAtmosphereModelling/figures/HIP_40594__Balmer_jump_corrections")
+plt.savefig("GitHub/StellarAtmosphereModelling/figures/HIP_40594_Balmer_jump_corrections.svg")
+
+fig, ax1 = plt.subplots(figsize=(10,5))
+colours1 = ['red', 'blue', 'green']
+for i in range(3):
+    ax1.plot(waves[i],fluxes_phot[i],linewidth = 0.2, alpha = 0.9, color = colours1[i])
+temp = star['Teff']
+dist = star['Dist']
+ax1.plot(wave_planck,planck_law(wave_planck, temp, dist), c ='magenta', lw = '0.4', label = 'Blackbody Curve')
+#ax1.set_ylim(0,1e-11)
+ax1.set_ylim(5e-13,2e-11)
+ax1.set_yscale('log')
+ax1.set_xlim(0, 900)
+ax1.set_xlabel(r'Wavelength (nm)')
+ax1.set_ylabel(r'Flux ($erg\ cm^{-2} s^{-1} \AA^{-1}$)')
+ax1.legend()
 
 plt.show()
